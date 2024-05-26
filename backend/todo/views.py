@@ -28,3 +28,20 @@ def get_all_task(request):
 class TodoView(viewsets.ModelViewSet):
     serializer_class = TodoSerializer
     queryset = Todo.objects.all()
+    def index(request):
+        return HttpResponse("<h1>App is running</h1>")
+
+    def add_task(request):
+        records = {
+            "id": "1",
+            "title": "task", 
+            "description": "add task", 
+            "completed": "false"
+        }
+        todo_coleccion.insert_one(records)
+        return HttpResponse("New task is added")
+
+
+    def get_all_task(request):
+        task = todo_coleccion.find()
+        return HttpResponse(task)
