@@ -55,12 +55,13 @@ def add_task(request):
         return JsonResponse({"error": "Internal server error"}, status=500)
     
 
-def delete_task(request):
+def delete_task(request, item_id):
     logger = logging.getLogger(__name__)
     try:
-        data = json.loads(request.body.decode('utf-8'))
-        task_id = data.get("_id")
-        result = todo_coleccion.delete_one({"_id": ObjectId(task_id)})
+        print("Entrando a delete taskt")
+        print(item_id)
+
+        result = todo_coleccion.delete_one({"_id": ObjectId(item_id)})
         if result.deleted_count == 1:
             logger.info("Tarea eliminada correctamente.")
             return JsonResponse({"message": "Task deleted"}, status=200)
@@ -71,20 +72,25 @@ def delete_task(request):
         logger.error("Error al eliminar la tarea: %s", e)
         return JsonResponse({"error": "Error interno del servidor"}, status=500)
     
-def update_task(request):
+def update_task(request, item_id):
     logger = logging.getLogger(__name__)
     try:
         data = json.loads(request.body.decode('utf-8'))  # Obtener los datos enviados desde el frontend
         task_id = data.get("_id")
+
+        print("Entrando a update taskt")
+        print(item_id)
+
         updates = {
             "title": data.get("title", ""),
             "description": data.get("description", ""),
             "completed": data.get("completed", True)
         }
+        print(updates)
         # Actualizar la tarea en la base de datos
-        result = todo_coleccion.update_one({"_id": ObjectId(task_id)}, {"$set": updates})
+        result = todo_coleccion.update_one({"_id": ObjectId(item_id)}, {"$set": updates})
 
-        # Verificar si la tarea se actualizó correctamente
+        # Verificar si la tarea se actualizó correctamente 
         if result.matched_count == 1:
             logger.info("Tarea actualizada correctamente.")
             return JsonResponse({"message": "Tarea actualizada correctamente."}, status=200)
